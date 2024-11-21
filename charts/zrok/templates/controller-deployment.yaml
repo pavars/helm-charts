@@ -28,6 +28,36 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
+        {{- if eq .Values.controller.database.type "postgres" }}
+        - name: {{ .Chart.Name }}-envsubst
+          image: "{{ .Values.envsubst.image.repository | default "steinbrueckri/envsubst" }}:{{ .Values.envsubst.image.tag | default "latest" }}"
+          env:
+          - name: ZROK_DB_USER
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.controller.database.existingSecret }}
+                name: {{ .Values.controller.database.existingSecret.name }}
+                key: {{ default "username" .Values.controller.database.existingSecret.usernameKey }}
+                {{- else }}
+                name: {{ include "zrok.fullname" . }}-database-secret
+                key: username
+                {{- end }}
+          - name: ZROK_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                {{- if .Values.controller.database.existingSecret }}
+                name: {{ .Values.controller.database.existingSecret.name }}
+                key: {{ default "password" .Values.controller.database.existingSecret.passwordKey }}
+                {{- else }}
+                name: {{ include "zrok.fullname" . }}-database-secret
+                key: password
+                {{- end }}
+          volumeMounts:
+          - name: zrok-config-envsubst
+            mountPath: /processed
+          - name: zrok-config
+            mountPath: /workdir
+        {{- end }}
         - name: {{ .Chart.Name }}-bootstrap
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -39,7 +69,11 @@ spec:
             - name: HOME
               value: {{ .Values.controller.persistence.mount_dir }}
           volumeMounts:
+            {{- if eq .Values.controller.database.type "postgres" }}
+            - name: zrok-config-envsubst
+            {{- else }}
             - name: zrok-config
+            {{- end }}
               mountPath: /etc/zrok
               readOnly: true
             - name: bootstrap-ziti
@@ -72,7 +106,11 @@ spec:
             - name: HOME
               value: {{ .Values.controller.persistence.mount_dir }}
           volumeMounts:
+            {{- if eq .Values.controller.database.type "postgres" }}
+            - name: zrok-config-envsubst
+            {{- else }}
             - name: zrok-config
+            {{- end }}
               mountPath: /etc/zrok
               readOnly: true
             - name: persistence
@@ -105,6 +143,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        {{- if eq .Values.controller.database.type "postgres" }}
+        - name: zrok-config-envsubst
+          emptyDir: {}
+        {{- end }}
         - name: zrok-config
           configMap:
             name: {{ include "zrok.fullname" . }}-config
