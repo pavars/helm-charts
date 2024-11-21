@@ -59,7 +59,15 @@ spec:
             {{- end }}
           env:
             - name: ZITI_ENROLL_TOKEN
-              value: {{ .Values.enrollmentJwt | quote }}
+              valueFrom:
+                secretKeyRef:
+                {{- if .Values.enrollmentJwt.existingSecret }}
+                  name: {{ .Values.enrollmentJwt.existingSecret.name | quote }}
+                  key: {{ default "token" .Values.enrollmentJwt.existingSecret.key | quote }}
+                {{- else }}
+                  name: {{ include "ziti-router.fullname" . }}-jwt
+                  key: "token"
+                {{- end }}
             # must be true or enroll() will not be called
             - name: ZITI_BOOTSTRAP
               value: "true"

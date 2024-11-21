@@ -5,7 +5,7 @@ ha:
 
 ctrl:
   # -- required control plane endpoint, e.g., ctrl.ziti.example.com:443
-  endpoint: ""
+  endpoint: "123"
 
 # -- Explicit proxy setting in the router configuration. Router can be deployed in a site 
 # where all egress traffic is forwarded through an explicit proxy.
@@ -249,6 +249,12 @@ csr:
 execMountDir:     /usr/local/bin
 # -- enrollment one time token from the controller's management API
 enrollmentJwt:
+  # -- plaintext JWT token which will create secret
+  token: ""
+  # -- existing secret object {name:, key: (default "token")}
+  existingSecret: {}
+    # name: "secret"
+    # key: "token"
 # -- read-only mountpoint for router identity secret specified in deployment for use by router run container
 identityMountDir: /etc/ziti/identity
 # -- writeable mountpoint where read-only config file is projected to allow router

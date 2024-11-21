@@ -151,6 +151,23 @@ controller:
       enforcing:        false
       # -- the period for checking usage limits
       cycle:            5m
+  # -- database configuration for zrok, default is sqlite3
+  database:
+    # -- database store type sqlite3 or postgres
+    type: "sqlite3"
+    # -- hostname for postgres database
+    host: ""
+    # -- username for postgres database, will create secret if existingSecret is not passed
+    username: ""
+    # -- password for postgres database, will create secret if existingSecret is not passed
+    password: ""
+    # -- database name for postgres database
+    name: ""
+    # -- existing secret which contains username and password
+    existingSecret: {}
+      # name: "existingSecret"
+      # passwordKey: "password"
+      # usernameKey: "username"
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
   ##
@@ -296,3 +313,9 @@ influxdb2:
     password: admin
     # -- The name of an existing secret with admin-password and admin-token for the InfluxDB service
     existingSecret: ""
+
+# -- Configuration for envsubst to expand environment variables in ctrl.yaml file for postgres password from secret (ref: https://github.com/steinbrueckri/envsubst)
+envsubst:
+  image: {}
+    # repository: "steinbrueckri/envsubst"
+    # tag: "latest"
