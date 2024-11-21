@@ -5,7 +5,7 @@ ha:
 
 ctrl:
   # -- required control plane endpoint, e.g., ctrl.ziti.example.com:443
-  endpoint: "123"
+  endpoint: ""
 
 # -- Explicit proxy setting in the router configuration. Router can be deployed in a site 
 # where all egress traffic is forwarded through an explicit proxy.
