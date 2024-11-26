@@ -31,11 +31,6 @@ spec:
         {{- if eq .Values.controller.database.type "postgres" }}
         - name: {{ .Chart.Name }}-envsubst
           image: "{{ .Values.envsubst.image.repository | default "steinbrueckri/envsubst" }}:{{ .Values.envsubst.image.tag | default "latest" }}"
-          args:
-          - envsubst < /workdir/ctrl.yaml > /processed/ctrl.yaml
-          command:
-          - /bin/ash
-          - -c
           env:
           - name: ZROK_DB_USER
             valueFrom:
@@ -172,7 +167,7 @@ spec:
             defaultMode: 0444
             items:
               - key: {{ .Values.ziti.ca_cert_file }}
-                path: {{ .Values.ziti.ca_cert_file }}}
+                path: {{ .Values.ziti.ca_cert_file }}
         {{- if .Values.controller.persistence.enabled }}
         - name: persistence
           persistentVolumeClaim:
