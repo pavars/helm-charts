@@ -250,9 +250,17 @@ ziti:
   # -- The Ziti Management API port
   advertisedPort: "443"
   # -- Ziti admin login name
-  username: admin
+  username: "admin"
   # -- Ziti admin login password
-  password: admin
+  password: ""
+  # -- Existing secret containing ziti admin password
+  existingSecret: {}
+    # -- Existing secret name
+    # name: ""
+    # -- Existing secret password key
+    # passwordKey: "admin-password"
+    # -- Existing secret username key
+    # usernameKey: "admin-user"
   # -- name of the configmap containing the Ziti CA certificate trust bundle
   # that trust-manager syncs to namespaces with the label
   # "openziti.io/namespace: enabled"; has format {{controller's Helm release name}}-ctrl-plane-cas
